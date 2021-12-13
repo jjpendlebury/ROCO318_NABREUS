@@ -83,6 +83,22 @@ int ServoPositions[16][5]; //you can use this to make a 2D array of values for y
 #define BLK   15
 #define BLA   14
 
+int leg0[4] = {FRH1, FRH2, FRK, FRA};
+int leg1[4] = {FLH1, FLH2, FLK, FLA};
+int leg2[4] = {BRH1, BRH2, BRK, BRA};
+int leg3[4] = {BLH1, BLH2, BLK, BLA};
+
+enum legside {
+  LEFT,
+  RIGHT
+};
+
+enum legGroup {
+  ALPHA,
+  BRAVO
+};
+
+
 
 
 
@@ -98,67 +114,42 @@ void setup() {
 
   delay(1000);
 
-  oneLegLift();
-
+  // step 1
+  leanLeg(leg0);
+  delay(1000);
+  legStep(leg3);
+  delay(1000);
+  footDown(0);
   delay(1000);
 
-  updateServo(12, 100);
-  updateServo(13, 100);
-  updateServo(14, 95);
-  updateServo(15, 100);
+  // step 2
+  leanLeg(leg2);
+  delay(1000);
+  legStep(leg1);
+  delay(1000);
+  footDown(2);
+  delay(1000);
 
-  delay(500);
+  //step 3
+  leanLeg(leg3);
+  delay(1000);
+  legStep(leg0);
+  delay(1000);
+  footDown(3);
+  delay(1000);
 
-  updateServo(12, 100);
-  updateServo(13, 140);
-  updateServo(14, 95);
-  updateServo(15, 60);
+  // step 4
+  //step 3
+  leanLeg(leg1);
+  delay(1000);
+  legStep(leg2);
+  delay(1000);
+  footDown(1);
+  delay(1000);
 
-  delay(500);
+  shuffleForwards();
 
-  updateServo(5, 100);
-  updateServo(6, 95);
-  delay(500);
-  updateServo(4, 150);
-  delay(500);
-  updateServo(5, 130);
-  updateServo(6, 75);
-  delay(500);
-//  updateServo(8, 125);
-  updateServo(1, 100);
-  updateServo(2,95);
-  delay(500);
-  updateServo(0, 40);
-  delay(500);
-  updateServo(1, 125);
-  updateServo(2, 75);
-  delay(500);
-    updateServo(12, 65);
-  delay(500);
-  updateServo(BRH2, 100);
-  updateServo(BRH1, 100);
-  delay(100);
-  updateServo(BRH2, 130);
-  delay(500);
- 
-//  forward sweep??
-  updateServo(0, 125);
-  updateServo(4, 70);
-//beggining of step 2
-  delay(500);
-  updateServo(FRH2, 100);
-  updateServo(FRH1, 70);
-  delay(100);
-  updateServo(FRH2, 125);
-  delay(500);
-  updateServo(FLH2, 100);
-  updateServo(FLH1, 120);
-  updateServo(FLK, 95);
-  delay(100);
-  updateServo(FLK, 60);
-  updateServo(FLH2, 130);
-  
-  
+
 }
 
 
@@ -196,26 +187,51 @@ void updateServo (int Id, int Angle) {
 
 }
 
-void oneLegLift() {
-  updateServo(0, 70);
-  updateServo(1, 130);
-  updateServo(2, 75);
-  updateServo(3, 87);
-  delay(500);
-  updateServo(4, 90);
-  updateServo(5, 130);
-  updateServo(6, 75);
-  updateServo(7, 110);
-  delay(500);
-  updateServo(8, 135);
-  updateServo(9, 145);
-  updateServo(10, 90);
-  updateServo(11, 70);
-  delay(500);
-  updateServo(12, 80);
-  updateServo(13, 140);
-  updateServo(14, 95);
-  updateServo(15, 100);
+void footDown(int leg) {
+  if (leg == 0) {
+    updateServo(1, 130);
+    updateServo(2, 75);
+  }
+  else if (leg == 1) {
+    updateServo(5, 130);
+    updateServo(6, 60);
+  }
+  else if (leg == 2) {
+    updateServo(9, 140);
+    updateServo(11, 90);
+  }
+  else if (leg == 3) {
+    updateServo(13, 140);
+    updateServo(15, 60);
+  }
+}
+
+
+void home(int leg) {
+  if (leg == 0) {
+    updateServo(0, 70);
+    updateServo(1, 130);
+    updateServo(2, 75);
+    updateServo(3, 87);
+  }
+  else if (leg == 1) {
+    updateServo(4, 125);
+    updateServo(5, 130);
+    updateServo(6, 60);
+    updateServo(7, 110);
+  }
+  else if (leg == 2) {
+    updateServo(8, 130);
+    updateServo(9, 140);
+    updateServo(10, 90);
+    updateServo(11, 70);
+  }
+  else {
+    updateServo(12, 70);
+    updateServo(13, 140);
+    updateServo(14, 95);
+    updateServo(15, 60);
+  }
 }
 
 void home() {
@@ -224,7 +240,7 @@ void home() {
   updateServo(2, 75);
   updateServo(3, 87);
 
-  updateServo(4, 125);
+  updateServo(4, 130);
   updateServo(5, 130);
   updateServo(6, 60);
   updateServo(7, 110);
@@ -238,6 +254,58 @@ void home() {
   updateServo(13, 140);
   updateServo(14, 95);
   updateServo(15, 60);
+}
+
+void leanLeg(int leg[]) {
+  updateServo(leg[1], 90);
+  updateServo(leg[2], 110);
+}
+
+void shuffleForwards(){
+  updateServo(FRH1, 70);
+  updateServo(FLH1, 130);
+  updateServo(BRH1, 130);
+  updateServo(BLH1, 70);
+}
+
+void legStep(int leg[]) {
+  int movement[3] = {0, 0, 0};
+  movement[1] = 100;
+  movement[2] = 100;
+
+  if (leg[0] == 0) {
+    movement[0] = 40;
+  } else if (leg[0] == 4) {
+    movement[0] = 160;
+  } else if (leg[0] == 8){
+    movement[0] = 90;
+  } else if (leg[0] == 12){
+    movement[0] = 110;
+  }
+
+  // lift foot
+  updateServo(leg[1], movement[1]);
+  updateServo(leg[2], movement[2]);
+  delay(500);
+
+  // take step here
+  updateServo(leg[0], movement[0]);
+
+  delay(500);
+
+  if (leg[0] == 0) {
+    footDown(0);
+  }
+  else if (leg[0] == 4) {
+    footDown(1);
+  }
+  else if (leg[0] == 8) {
+    footDown(2);
+  } else if (leg[0] == 12) {
+    footDown(3);
+  }
+
+
 }
 
 void moveServo(int servoNum, int startingPos, int endPos) {
