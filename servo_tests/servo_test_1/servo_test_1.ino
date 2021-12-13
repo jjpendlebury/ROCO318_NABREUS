@@ -17,10 +17,11 @@
   BSD license, all text above must be included in any redistribution
  ****************************************************/
 
-// SDA A4
-// SCL A5
-// VCC 5V
-// GND GND
+// SDA A4 - Yellow -   Orange 
+// SCL A5 - Green - Yellow
+// VCC 5V - Orange - Red 
+// V+ - Red
+// GND GND - Blue - Green 
 
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
@@ -113,12 +114,29 @@ void loop() {
 //  for (uint16_t microsec = USMAX; microsec > USMIN; microsec--) {
 //    pwm.writeMicroseconds(servonum, microsec);
 //  }
-angle = 90;
-for(int i = 0; i <= 15; i++)
-{
-pwm.writeMicroseconds(i, 1500);
-}
-// takeStep(0);
+// for(int i = 0; i <= 15; i++)
+// {
+// pwm.writeMicroseconds(i, 1500);
+// }
+//takeStep();
+//
+
+for (int ServoNumber = 0; ServoNumber <= 15; ServoNumber++) // set all servos to 80 degrees
+  {
+    UpdateServo(ServoNumber, 80);
+  }
+  delay(1000);
+for (int ServoNumber = 0; ServoNumber <= 15; ServoNumber++) // set all servos to 80 degrees
+  {
+    UpdateServo(ServoNumber, 100);
+  } 
+// pwm.wrtieMicroseconds(8, 1500);
+// pwm.writeMicroseconds(12, 1500);
+
+// for(int i = 0; i <= 3; i++)
+// {    
+//   takeStep(i);
+// }
 
 //delay(1000);
 //
@@ -130,21 +148,24 @@ pwm.writeMicroseconds(i, 1500);
 //angle = 180;
 //delay(500);
 //pwm.writeMicroseconds(servonum, 1200);
-
-  delay(500);
-
-  servonum = 1;
 //  if (servonum > 1) servonum = 0; // Testing the first 8 servo channels
 }
 
-void takeStep(int legNumber) {
-  pwm.writeMicroseconds(legNumber, 1000);
-  pwm.writeMicroseconds(legNumber + 1, 1500);
-  pwm.writeMicroseconds(legNumber + 2, 1500);
-  pwm.writeMicroseconds(legNumber + 3, 1550);
+void takeStep() {
+  pwm.writeMicroseconds(0, 1000);
+  pwm.writeMicroseconds(1, 1500);
+  pwm.writeMicroseconds(2, 1500);
+  pwm.writeMicroseconds(3, 1550);
   delay(1000);
-  pwm.writeMicroseconds(legNumber, 2000);
-  pwm.writeMicroseconds(legNumber + 1, 1200);
-  pwm.writeMicroseconds(legNumber + 2, 1800);
-  pwm.writeMicroseconds(legNumber + 3, 1450)
+  pwm.writeMicroseconds(0, 2000);
+  pwm.writeMicroseconds(1, 1200);
+  pwm.writeMicroseconds(2, 1800);
+  pwm.writeMicroseconds(3, 1450);
+}
+
+void UpdateServo (int Id, int Angle) {
+
+  double pulselength = map(Angle, 0, 180, SERVOMIN, SERVOMAX); //map the degree value to pulselength value
+  pwm.setPWM(Id, 0, pulselength); //Send the angle to the appropiate servo
+
 }
